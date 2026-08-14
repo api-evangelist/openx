@@ -7,36 +7,44 @@ description: >-
   real-time marketplace that runs OpenRTB-based auctions across display,
   video, CTV, native, and mobile inventory. Its product suite is organized
   around the OpenX Exchange (the core marketplace), OpenXSelect (curation,
-  deal creation, and supply-path targeting), OpenXBuild (a software toolkit
-  for assembling custom supply-side workflows and real-time bidstream
-  integrations), and OpenXControl (publisher yield management and demand
-  routing). OpenX exposes several developer-facing APIs documented at
-  docs.openx.com — an OpenRTB API for DSP bidding integrations, a Platform
-  API for account, inventory, demand, targeting, and deal management, a
-  Reporting API for analytics and performance metrics, an OpenXSelect
-  GraphQL API for managing audiences/deals/inventory lists, and an
-  OpenXBuild Real-Time Bidstream API — but the references are gated behind
-  OAuth and OpenX does not publish a public OpenAPI specification or
-  Postman collection. The company is a major contributor to the Prebid.org
-  header-bidding ecosystem (Prebid.js and Prebid Server) and maintains a
-  large GitHub organization with OAuth-based API client libraries in
-  Python, PHP, Java, Perl, and Ruby for the legacy OX3 API. OpenX's
-  business model is transaction-fee based — it takes a share of each ad
-  impression cleared through its exchange — and access to the developer
-  APIs requires an active OpenX account and BD/account-management
-  onboarding rather than self-service signup.
+  deal creation, and supply-path targeting), OpenXBuild (real-time bidstream
+  enrichment, auction insights, and identity resolution), and OpenXControl
+  (publisher yield management and demand routing). OpenX runs five developer
+  surfaces on api.openx.com: a REST Platform API (v4) for accounts,
+  inventory, orders, deals, and targeting; a Reporting API for asynchronous
+  CSV report generation across 41 dimensions and 9 metrics; an OpenXSelect
+  GraphQL API for audiences, segments, deals, and bidder objects; an
+  OpenXBuild Real-Time Bidstream API that a partner implements as a
+  containerized enrichment service (HTTP POST /openrtb25 plus an IAB Agentic
+  RTB Framework gRPC RTBExtensionPoint); and an undocumented but live remote
+  MCP server. Authentication is OAuth 2.0 authorization-code with PKCE
+  fronted by Google Cloud Identity Platform, published through real OIDC and
+  RFC 9728 discovery documents, with a separate 90-day x-apikey credential
+  for the GraphQL API. OpenX publishes no OpenAPI, no Postman collection, no
+  status page, no pricing, and no security.txt, and its documentation site
+  currently renders as a broken single-page-app shell whose underlying
+  content survives only as a JSON search index. The company is a major
+  contributor to the Prebid.org header-bidding ecosystem and maintains a
+  large GitHub organization, though its first-party API client libraries were
+  last released to a package registry in 2021 and still target a legacy
+  OAuth 1.0 login host that now returns HTTP 502. The business model is
+  transaction-fee based, and API access requires an active OpenX account and
+  BD/account-management onboarding rather than self-service signup.
 type: Index
 accessModel:
-  pricing: unknown
-  onboarding: unknown
+  pricing: none
+  onboarding: sales
   trial: false
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  label: Sales-gated
+  confidence: high
+  source:
+    - https://www.openx.com/pricing/
+    - https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-get-started/
+    - https://docs.openx.com/publishers/reporting-api/
+  generated: '2026-08-13'
+  method: searched
 position: Provider
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/openx.png
@@ -56,50 +64,263 @@ tags:
   - Display Advertising
   - Curation
   - Identity
+  - GraphQL
+  - gRPC
+  - MCP
+  - Reporting
+  - Audience Targeting
 url: https://raw.githubusercontent.com/api-evangelist/openx/refs/heads/main/apis.yml
 created: '2026-05-25'
-modified: '2026-05-25'
+modified: '2026-08-13'
 specificationVersion: '0.20'
-apis: []
+apis:
+  - aid: openx:openx-platform-api
+    name: OpenX Platform API
+    description: >-
+      JSON REST API (v4) for the OpenX ad server. Sixteen CRUD objects
+      (account, ad, adunit, adunitgroup, comment, creative, deal, floorrule,
+      lineitem, optimization, order, package, paymenthistory, site,
+      sitesection, user) and six read-only services (audittrail, geo, market,
+      options, session, subtypes). Batch create/update/delete, offset
+      pagination via limit/offset with a has_more flag, and a per-object
+      /available_fields endpoint that returns the field schema for a given
+      action. Bearer token plus an X-Openx-Instance tenant header.
+    humanURL: https://docs.openx.com/developers/api-ref/
+    baseURL: https://api.openx.com/api/v1/ox/4.0
+    tags:
+      - platform
+      - rest
+      - inventory
+      - deals
+      - targeting
+    properties:
+      - url: https://docs.openx.com/developers/api-ref/
+        type: APIReference
+      - url: https://docs.openx.com/developers/about-topics-api/
+        type: Documentation
+      - url: https://docs.openx.com/developers/api-get-started-auth/
+        type: GettingStarted
+      - url: authentication/openx-authentication.yml
+        type: Authentication
+      - url: conventions/openx-conventions.yml
+        type: Conventions
+      - url: errors/openx-error-types.yml
+        type: ErrorCatalog
+      - url: data-model/openx-data-model.yml
+        type: DataModel
+      - url: rate-limits/openx-rate-limits.yml
+        type: RateLimits
+  - aid: openx:openx-reporting-api
+    name: OpenX Reporting API
+    description: >-
+      Asynchronous reporting API for authorized OpenX publishers. POST
+      generateReport with dimensions, metrics, filters, reportType
+      (HOURLY|DAILY) and an ISO-8601 date range returns a report id; POST
+      pullReport exchanges that id for a CSV (HTTP 202 while still
+      generating). 41 case-sensitive dimensions and 9 metrics, a 1,000,000-row
+      and 1 GB ceiling per report, and a 3-month (hourly) or 2-year (daily)
+      lookback window.
+    humanURL: https://docs.openx.com/publishers/reporting-api-reference/
+    baseURL: https://api.openx.com/api/v1/reporting-api
+    tags:
+      - reporting
+      - analytics
+      - rest
+      - publishers
+    properties:
+      - url: https://docs.openx.com/publishers/reporting-api-reference/
+        type: APIReference
+      - url: https://docs.openx.com/publishers/reporting-api/
+        type: Documentation
+      - url: https://github.com/openx/reporting-api-client
+        type: SourceCode
+      - url: authentication/openx-authentication.yml
+        type: Authentication
+      - url: rate-limits/openx-rate-limits.yml
+        type: RateLimits
+  - aid: openx:openxselect-api
+    name: OpenXSelect API
+    description: >-
+      GraphQL API (BETA) for the OpenXSelect curation platform — query
+      providers, segments, audiences, deals and packages, and mutate
+      audiences (create/update/archive/activate), deals, routed retargeting
+      segments and the bidder object family (BidderOrder, BidderLineItem,
+      BidderCreative). Authenticated with a 90-day organization-wide API key
+      in an x-apikey header. Introspection is gated; the published reference
+      documents ~120 objects, ~40 inputs, custom scalars and interfaces.
+    humanURL: https://docs.openx.com/openxselect/oxs-api-reference/
+    baseURL: https://api.openx.com/oa/graphql
+    tags:
+      - graphql
+      - curation
+      - audiences
+      - deals
+      - segments
+    properties:
+      - url: https://docs.openx.com/openxselect/oxs-api-reference/
+        type: APIReference
+      - url: https://docs.openx.com/openxselect/oxs-api-get-started/
+        type: GettingStarted
+      - url: graphql/openx-graphql.md
+        type: GraphQL
+      - url: https://docs.openx.com/openxselect/oxs-api-graphql-explorer/
+        type: Sandbox
+      - url: sandbox/openx-sandbox.yml
+        type: Sandbox
+      - url: https://docs.openx.com/openxselect/oxs-api-errors-and-exceptions/
+        type: ErrorCatalog
+      - url: data-model/openx-data-model.yml
+        type: DataModel
+  - aid: openx:openx-mcp-server
+    name: OpenX MCP Server
+    description: >-
+      Live remote Model Context Protocol server at https://api.openx.com/mcp.
+      Discovered by probe, not by documentation — OpenX does not mention MCP
+      anywhere in its published docs, but the endpoint answers POST and GET
+      with a JSON-RPC 2.0 envelope and an OAuth challenge. The tool list is
+      auth-gated behind the same OAuth 2.0 authorization server that fronts
+      the Platform API, advertised through RFC 9728 protected-resource
+      metadata naming the resource "OpenX Platform API".
+    humanURL: https://docs.openx.com/developers/api-authentication/
+    baseURL: https://api.openx.com/mcp
+    tags:
+      - mcp
+      - agent-native
+      - oauth
+    properties:
+      - url: mcp/openx-mcp.yml
+        type: MCPServer
+      - url: authentication/openx-authentication.yml
+        type: Authentication
+      - url: scopes/openx-scopes.yml
+        type: OAuthScopes
+      - url: well-known/openx-well-known.yml
+        type: WellKnown
+  - aid: openx:openxbuild-real-time-bidstream-api
+    name: OpenXBuild Real-Time Bidstream API
+    description: >-
+      An inverted API — OpenX is the caller. A partner implements an
+      enrichment service that OpenX hosts as a container inside its own
+      Kubernetes namespace and calls in the auction path, either as HTTP
+      POST /openrtb25 with an OpenRTB 2.5 BidRequest projection, or as the
+      IAB Agentic RTB Framework gRPC RTBExtensionPoint.GetMutations over
+      OpenRTB 2.6 protos. The service returns segment activations, extended
+      identifiers, or deal floor overrides inside a 10 ms budget. No baseURL
+      is recorded because the endpoint is the partner's container, assigned a
+      port by OpenX at deployment time.
+    humanURL: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api/
+    tags:
+      - openrtb
+      - grpc
+      - bidstream
+      - enrichment
+      - iab-artf
+    properties:
+      - url: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/
+        type: APIReference
+      - url: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-artf/
+        type: Documentation
+      - url: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-get-started/
+        type: GettingStarted
+      - url: grpc/openx-artf-rtbextensionpoint.proto
+        type: Protobuf
+      - url: grpc/openx-oxext.proto
+        type: Protobuf
+      - url: grpc/_index.yml
+        type: Protobuf
+      - url: https://github.com/openx/openx-enrichment-service-template
+        type: SourceCode
 common:
-  - type: DomainSecurity
-    url: security/openx-domain-security.yml
   - type: Website
     url: https://www.openx.com
-  - type: Products
-    url: https://www.openx.com/products/
+  - type: DeveloperPortal
+    url: https://docs.openx.com/developers/about-topics-api/
   - type: Documentation
     url: https://docs.openx.com
-  - type: Developers
-    url: https://docs.openx.com/Content/developers/index.html
+  - type: APIReference
+    url: https://docs.openx.com/developers/api-ref/
+  - type: GettingStarted
+    url: https://docs.openx.com/developers/api-get-started-auth/
+  - type: Support
+    url: https://docs.openx.com/resources/support/
+  - type: HelpCenter
+    url: https://community.openx.com
+  - type: ChangeLog
+    url: https://docs.openx.com/resources/release-notes/
+  - type: ChangeLog
+    url: changelog/openx-changelog.yml
+  - type: Authentication
+    url: authentication/openx-authentication.yml
+  - type: OAuthScopes
+    url: scopes/openx-scopes.yml
+  - type: Conventions
+    url: conventions/openx-conventions.yml
+  - type: ErrorCatalog
+    url: errors/openx-error-types.yml
+  - type: DataModel
+    url: data-model/openx-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/openx-lifecycle.yml
+  - type: Conformance
+    url: conformance/openx-conformance.yml
+  - type: RateLimits
+    url: rate-limits/openx-rate-limits.yml
+  - type: Plans
+    url: plans/openx-plans-pricing.yml
+  - type: Packages
+    url: packages/openx-packages.yml
+  - type: SDKs
+    url: packages/openx-packages.yml
+  - type: Components
+    url: components/openx-components.yml
+  - type: Sandbox
+    url: sandbox/openx-sandbox.yml
+  - type: MCPServer
+    url: mcp/openx-mcp.yml
+  - type: WellKnown
+    url: well-known/openx-well-known.yml
+  - type: LLMsTxt
+    url: llms/openx-llms.txt
+  - type: GraphQL
+    url: graphql/openx-graphql.md
+  - type: Protobuf
+    url: grpc/_index.yml
+  - type: DomainSecurity
+    url: security/openx-domain-security.yml
   - type: OpenXExchange
-    url: https://www.openx.com/products/openx-exchange/
+    url: https://www.openx.com/openxexchange/
   - type: OpenXSelect
-    url: https://www.openx.com/products/openx-select/
+    url: https://www.openx.com/openxselect/
   - type: OpenXBuild
-    url: https://www.openx.com/products/openx-build/
+    url: https://www.openx.com/openxbuild/
   - type: OpenXControl
-    url: https://www.openx.com/products/openx-control/
+    url: https://www.openx.com/openxcontrol/
   - type: Publishers
     url: https://www.openx.com/publishers/
   - type: Advertisers
     url: https://www.openx.com/advertisers/
   - type: Partners
     url: https://www.openx.com/partners/
+  - type: KnowledgeHub
+    url: https://www.openx.com/knowledge-hub/
   - type: Leadership
     url: https://www.openx.com/leadership/
   - type: Newsroom
-    url: https://www.openx.com/newsroom/
+    url: https://www.openx.com/news-press/
   - type: Blog
-    url: https://www.openx.com/blog/
+    url: https://blog.openx.com/
   - type: Careers
     url: https://www.openx.com/careers/
   - type: Contact
     url: https://www.openx.com/contact/
   - type: PrivacyPolicy
-    url: https://www.openx.com/privacy-policy/
+    url: https://www.openx.com/legal/privacy-policy/
   - type: TermsOfService
-    url: https://www.openx.com/terms-of-use/
+    url: https://www.openx.com/legal/terms-and-conditions/
+  - type: Legal
+    url: https://www.openx.com/legal/
+  - type: Regulations
+    url: https://docs.openx.com/resources/regulations/
   - type: GitHubOrganization
     url: https://github.com/openx
   - type: SDK — Python (OX3)
@@ -112,22 +333,29 @@ common:
     url: https://github.com/openx/OX3-Perl-API-Client
   - type: SDK — Ruby (OX3)
     url: https://github.com/openx/OX3-Ruby-API-Client
+  - type: Tool — Reporting API Client (Python)
+    url: https://github.com/openx/reporting-api-client
+  - type: Tool — Enrichment Service Template
+    url: https://github.com/openx/openx-enrichment-service-template
+  - type: Tool — OpenRTB 2.x Specification
+    url: https://github.com/openx/openrtb2.x
   - type: Tool — Prebid.js
     url: https://github.com/openx/Prebid.js
   - type: Tool — Prebid Server
     url: https://github.com/openx/prebid-server
-  - type: Tool — Reporting API Client (Python)
-    url: https://github.com/openx/reporting-api-client
   - type: Tool — SSRTBPriceCrypter
     url: https://github.com/openx/SSRTBPriceCrypter
-  - type: Tool — Enrichment Service Template
-    url: https://github.com/openx/openx-enrichment-service-template
   - type: LinkedIn
     url: https://www.linkedin.com/company/openx
   - type: Twitter
     url: https://twitter.com/OpenX
   - type: YouTube
-    url: https://www.youtube.com/user/OpenXTV
+    url: https://www.youtube.com/@OpenX
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 23
+  pass: local-v1
