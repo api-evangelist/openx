@@ -1,0 +1,37 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.openx.com/
+plan_count: 0
+public_pricing: false
+self_serve_signup: false
+note: >-
+  OpenX publishes no pricing page and no plans of any kind. https://www.openx.com/pricing/
+  returns HTTP 404, and neither the marketing site nor the 964 published
+  documentation sections carry a rate card, tier table, free tier or trial. The
+  business model is transaction-fee based — OpenX takes a share of each
+  impression cleared through the exchange — and every API surface requires an
+  existing OpenX account provisioned through partner/BD onboarding, not signup.
+  Two API surfaces additionally require a commercial negotiation before access:
+  the OpenXBuild Real-Time Bidstream API ("Contract and commercial details ...
+  especially revenue share, payment term days, or tax language") and the
+  Auction Insights API. Recorded as an honest zero, not an omission.
+plans: []
+access_model:
+  onboarding: >-
+    Publishers and demand partners are set up by an OpenX Partner Services
+    representative; Reporting API access is "only provided to authorized
+    Publishers" and requires accepting Terms and Conditions in the OpenXControl
+    UI > Reporting tab.
+  openxselect_api_keys: >-
+    Self-serve once inside OpenXSelect — an organization admin can mint a
+    90-day API key from the Settings page — but the OpenXSelect account itself
+    is not self-serve.
+  revenue_share: negotiated per partner; not published
+evidence:
+  - url: https://www.openx.com/pricing/
+    status: 404
+  - url: https://www.openx.com/
+    status: 200
+  - url: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-get-started/
+    status: 200
+    note: names revenue share / payment terms as a pre-integration negotiation

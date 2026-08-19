@@ -1,0 +1,56 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/openxselect/oxs-api-graphql-explorer/
+note: >-
+  OpenX publishes NO sandbox in the usual sense — there is no test mode, no
+  test-vs-live key prefix, no test data, no fixtures, no simulator values and no
+  time simulation anywhere in the 964 published documentation sections (a
+  full-text scan returns zero hits for "sandbox"). What it does ship is a hosted
+  GraphQL console for the OpenXSelect API, plus a partner-side integration test
+  path for demand partners. Both are recorded honestly below; neither is a
+  self-serve test environment.
+test_mode:
+  supported: false
+  key_prefixes: []
+  test_data: []
+  test_clock: false
+  fixtures: false
+consoles:
+  - name: OpenXSelect API GraphQL Explorer
+    kind: playground
+    url: https://docs.openx.com/openxselect/oxs-api-graphql-explorer/
+    endpoint_default: https://api.openx.com/oa/graphql
+    features:
+      - Schema tab listing every query/mutation with descriptions
+      - SDL tab that views and downloads the complete schema file
+      - Explorer tab that composes and runs queries/mutations against a live environment
+      - Connection settings dialog for switching the target environment endpoint
+    auth: >-
+      Requires an x-apikey header set to a 90-day API key minted from
+      OpenXSelect UI > Settings > API Keys. No anonymous or demo key is offered.
+    environments: >-
+      The Connection settings dialog accepts an arbitrary endpoint URL and OpenX
+      warns that "all queries performed in the GraphQL explorer will impact the
+      environment set in the Endpoint field" — production
+      (https://api.openx.com/oa/graphql) is the documented value. OpenX does not
+      publish the URL of any non-production environment.
+    gated: true
+    source: https://docs.openx.com/openxselect/oxs-api-get-started/
+integration_testing:
+  - name: Demand partner test integration
+    url: https://docs.openx.com/demand-partners/demand-test-integration/
+    note: >-
+      A coordinated pre-launch bid-integration test run with an OpenX Platform
+      Development Manager, not a self-serve sandbox.
+  - name: OpenXBuild enrichment service certification harness
+    repo: https://github.com/openx/openx-enrichment-service-template
+    path: certification/
+    contents:
+      - certification/docker-compose.yml
+      - certification/k6/openrtb.js (k6 load script)
+      - certification/k6/openrtb_1000.jsonl (1,000 sample OpenRTB bid requests)
+    note: >-
+      The closest thing OpenX publishes to test fixtures: a runnable local
+      harness with a thousand real-shaped OpenRTB request samples, shipped for
+      partners building an enrichment container. It tests the partner's service,
+      not OpenX's API.

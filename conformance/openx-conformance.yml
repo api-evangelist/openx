@@ -1,0 +1,189 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://docs.openx.com/ documentation corpus plus live discovery documents at
+  https://api.openx.com/.well-known/
+note: >-
+  OpenX is an ad-tech infrastructure company, so most of the standards it
+  conforms to are IAB Tech Lab specifications carried in the bidstream rather
+  than general-purpose API standards. Entries marked conforms:true are backed by
+  either a published OpenX statement or a live probe; nothing is asserted from
+  category membership alone.
+standards:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      https://api.openx.com/.well-known/oauth-authorization-server (HTTP 200)
+      advertises authorization_code + refresh_token grants, S256 PKCE and a
+      registration endpoint; the flow is documented at
+      https://docs.openx.com/developers/api-authentication/
+  - id: oidc
+    conforms: true
+    evidence: >-
+      https://api.openx.com/.well-known/openid-configuration (HTTP 200) —
+      issuer, RS256 id_token signing, pairwise subject types, userinfo endpoint.
+  - id: rfc7636-pkce
+    conforms: true
+    evidence: code_challenge_methods_supported = [S256]
+  - id: rfc9728-oauth-protected-resource
+    conforms: partial
+    evidence: >-
+      https://api.openx.com/.well-known/oauth-protected-resource (HTTP 200)
+      publishes resource, resource_name "OpenX Platform API",
+      authorization_servers and bearer_methods_supported. Partial because the
+      401 challenge from https://api.openx.com/mcp returns an EMPTY
+      WWW-Authenticate header, so a client cannot discover the metadata from the
+      challenge as RFC 9728 intends.
+  - id: rfc7591-dynamic-client-registration
+    conforms: advertised
+    evidence: registration_endpoint https://api.openx.com/oauth2/v1/register (not exercised)
+  - id: mcp
+    conforms: true
+    evidence: >-
+      https://api.openx.com/mcp answers POST and GET with a JSON-RPC 2.0
+      envelope (error -32001 Unauthorized). Live but undocumented and
+      auth-gated; see mcp/openx-mcp.yml
+  - id: graphql
+    conforms: true
+    evidence: >-
+      OpenXSelect API at https://api.openx.com/oa/graphql; published schema
+      reference at https://docs.openx.com/openxselect/oxs-api-reference/ with
+      Query/Mutation/Objects/Inputs/Enums/Scalars/Interfaces sections and an SDL
+      download in the GraphQL Explorer. Introspection is API-key gated.
+  - id: openrtb-2.5
+    conforms: true
+    evidence: >-
+      OpenXBuild Real-Time Bidstream API EnrichmentRequest is "a restricted
+      projection of the IAB OpenRTB 2.5 BidRequest object";
+      https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/
+  - id: openrtb-2.6
+    conforms: true
+    evidence: >-
+      ARTF gRPC path carries the BidRequest projection using the IAB OpenRTB 2.6
+      proto schema; github.com/openx/openrtb2.x is an OpenX-maintained mirror of
+      the OpenRTB 2.x specification from 2.6 onward.
+  - id: iab-agentic-rtb-framework
+    conforms: true
+    evidence: >-
+      OpenX implements the IAB ARTF RTBExtensionPoint service
+      (rpc GetMutations) over gRPC/HTTP2;
+      https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-artf/ and the
+      .proto files captured in grpc/
+  - id: grpc
+    conforms: true
+    evidence: proto3 service RTBExtensionPoint over gRPC/HTTP2 (cleartext)
+  - id: protobuf
+    conforms: true
+    evidence: >-
+      grpc/openx-oxext.proto declares OpenX's own extension range 4000-4999 on
+      BidRequest.Imp.Ext
+  - id: iab-tcf-eu
+    conforms: true
+    evidence: >-
+      user.consent carries the IAB TCF consent string; TCF EU listed among the
+      supported privacy signals in the release notes.
+  - id: iab-gpp
+    conforms: true
+    evidence: >-
+      regs.ext.gpp and regs.ext.gpp_sid supported; "OpenX now supports the US
+      Signals that may be present in the Global Privacy Platform (GPP)"
+  - id: ccpa-us-privacy-string
+    conforms: true
+    evidence: regs.ext.us_privacy (CCPA/CPRA U.S. Privacy String)
+  - id: iab-supply-chain-object
+    conforms: true
+    evidence: >-
+      source.ext.schain "conforming to the IAB Tech Lab spec";
+      https://docs.openx.com/publishers/supplychain-object-integration/
+  - id: ads-txt
+    conforms: true
+    evidence: https://docs.openx.com/publishers/quality-ads-txt/
+  - id: app-ads-txt
+    conforms: true
+    evidence: https://docs.openx.com/publishers/quality-app-ads-txt/
+  - id: iab-content-taxonomy-2.2
+    conforms: true
+    evidence: >-
+      "OpenX now fully supports IAB Content Taxonomy v2.2" (release notes);
+      site.cat / site.page.cat
+  - id: vast
+    conforms: true
+    evidence: >-
+      CTV/video ad tags served as VAST;
+      https://docs.openx.com/publishers/ctv-vast/
+  - id: prebid
+    conforms: true
+    evidence: >-
+      OpenX publishes Prebid.js web and video adapters and maintains forks of
+      Prebid.js, prebid-server and prebid-server-java;
+      https://docs.openx.com/publishers/prebid-adapters/
+  - id: open-measurement
+    conforms: partial
+    evidence: github.com/openx/Open-Measurement-JSClients (fork of the IAB OM SDK JS clients)
+  - id: skadnetwork-4.0
+    conforms: true
+    evidence: >-
+      "OpenX is now supporting version 4.0 of Apple's SKAdNetwork";
+      https://docs.openx.com/demand-partners/ios14-and-skadnetwork-support/
+  - id: gdpr
+    conforms: true
+    evidence: >-
+      regs.ext.gdpr flag honoured; https://docs.openx.com/resources/gdpr-support/
+  - id: coppa
+    conforms: true
+    evidence: regs.coppa flag honoured
+  - id: eu-digital-services-act
+    conforms: true
+    evidence: >-
+      "OpenX role is to act as a bridge ... and pass all new oRTB parameters"
+      for DSA (release notes, EU market)
+  - id: prometheus-exposition
+    conforms: true
+    evidence: >-
+      OpenXBuild enrichment services expose GET /metrics in Prometheus format;
+      /healthz, /health/ready, /health/live readiness/liveness endpoints
+  - id: openapi
+    conforms: false
+    evidence: >-
+      No OpenAPI/Swagger document is published anywhere. Probed
+      https://api.openx.com/{openapi.json,openapi.yaml,swagger.json,
+      v1/openapi.json,api-docs,docs,redoc} — all HTTP 404 — and the docs corpus
+      returns zero hits for "openapi" or "swagger".
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      No AsyncAPI document and no webhook surface. Zero hits for "webhook" in
+      the 964-section documentation corpus.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      Errors use a proprietary JSON envelope (http_status/type/message/
+      field_errors), not application/problem+json. See errors/openx-error-types.yml
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: no Sunset or Deprecation header support is documented
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: >-
+      /.well-known/security.txt returns 404 on www.openx.com and HTTP 500 on
+      api.openx.com
+  - id: a2a
+    conforms: false
+    evidence: >-
+      No agent card at /.well-known/agent-card.json or /.well-known/agent.json on
+      any OpenX host
+  - id: llms-txt
+    conforms: true
+    evidence: >-
+      https://www.openx.com/llms.txt (HTTP 200, 1,871 bytes) — a marketing-scope
+      llms.txt naming products and audiences; it does not reference any API.
+certifications_published: false
+certifications: []
+compliance_program_published: false
+compliance_note: >-
+  OpenX publishes no trust center and no named certifications. trust.openx.com
+  does not resolve, https://www.openx.com/security/ returns 404, and the
+  documentation corpus returns zero hits for "SOC 2", "ISO 27001" or
+  "trust center". Regulatory posture is published only as bidstream signal
+  handling (GDPR/CCPA/COPPA/DSA/GPP) under https://docs.openx.com/resources/regulations/.
+  No `Compliance` pointer is emitted.

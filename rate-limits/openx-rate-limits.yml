@@ -1,0 +1,68 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/developers/api-response-codes/
+docs:
+  - https://docs.openx.com/developers/api-response-codes/
+  - https://docs.openx.com/publishers/reporting-api-reference/
+  - https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/
+  - https://docs.openx.com/marketers/openxbuild/oxb-auction-insights-api/
+limit_count: 1
+note: >-
+  OpenX publishes exactly one call-rate limit, and it is stated qualitatively —
+  an hourly per-instance quota whose numeric value is never printed. No
+  RateLimit-* or X-RateLimit-* response headers and no Retry-After contract are
+  documented anywhere in the 964 published documentation sections, so an agent
+  has no runtime signal: it learns it is throttled only by receiving a 429. The
+  remaining entries below are hard service limits (payload, latency, retention)
+  rather than call-rate limits, and are recorded separately.
+rate_limits:
+  - name: Platform API hourly instance quota
+    scope: per-instance
+    window: 1 hour (calendar hour)
+    limit: null
+    limit_published: false
+    burst: null
+    status_on_exhaustion: 429
+    error_type: Too Many Requests
+    reset: at the start of the next hour
+    counted_traffic: >-
+      Both scripted API calls AND ordinary human usage of the OpenX Admin UI
+      count against the same instance quota.
+    headers: []
+    source: https://docs.openx.com/developers/api-response-codes/
+response_headers:
+  documented: []
+  observed:
+    - name: x-request-id
+      note: >-
+        Present on every api.openx.com response observed on 2026-08-13,
+        including 401s. Not a rate-limit signal, but the only correlation
+        header the platform emits.
+  missing: [RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset, Retry-After]
+service_limits:
+  - surface: Reporting API
+    limit: 1,000,000 rows per report
+    source: https://docs.openx.com/publishers/reporting-api-reference/
+  - surface: Reporting API
+    limit: 1 GB maximum report size
+    source: https://docs.openx.com/publishers/reporting-api-reference/
+  - surface: Reporting API (HOURLY)
+    limit: 3-month lookback window
+    source: https://docs.openx.com/publishers/reporting-api-reference/
+  - surface: Reporting API (DAILY)
+    limit: 2-year lookback window
+    source: https://docs.openx.com/publishers/reporting-api-reference/
+  - surface: OpenXBuild Real-Time Bidstream API
+    limit: 10 ms request timeout (tmax); requests exceeding the budget may be dropped
+    target: <2 ms average, <5 ms at p95
+    shedding: >-
+      "The platform may shed traffic dynamically to protect auction latency" —
+      an unannounced, load-dependent throttle rather than a published quota.
+    status_on_overload: 429
+    source: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/
+  - surface: OpenX Auction Insights API
+    limit: 14-day data window; refreshed hourly, available within 12 hours of the event
+    source: https://docs.openx.com/marketers/openxbuild/oxb-auction-insights-api/
+  - surface: OpenXBuild enrichment object store
+    limit: GCS bucket lifecycle deletes files older than 14 days
+    source: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/

@@ -1,0 +1,122 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/developers/api-response-codes/
+docs:
+  - https://docs.openx.com/developers/api-response-codes/
+  - https://docs.openx.com/openxselect/oxs-api-errors-and-exceptions/
+  - https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/
+format: proprietary
+rfc9457: false
+note: >-
+  OpenX does not use RFC 9457 problem+json. The Platform API returns a JSON
+  body carrying an OpenX error *type* (a human-readable string, not a URI) plus
+  field-level detail dictionaries. Captured from the published error reference;
+  there is no OpenAPI to derive statuses from.
+envelope:
+  rest:
+    media_type: application/json
+    fields:
+      http_status: numeric HTTP status repeated in the body
+      type: the OpenX error type (see error_types below)
+      message: human-readable description
+      attribute: the offending field name (value errors)
+      choices: the allowed values (value errors)
+      field: field definition dictionary
+      field_errors: per-field errors for sub-object fields
+      item_errors: per-item errors for array fields
+      dependency: the related field when a Dependency error fires
+      referencing_objects: objects blocking a delete when a Reference error fires
+      uid: the object UID when available
+  graphql:
+    media_type: application/json
+    http_status: 200
+    fields:
+      errors: array of {message, path, extensions.code, extensions.errors[]}
+      data: still present; may contain nulls for the failed field
+    codes_observed: [GRAPHQL_VALIDATION_FAILED, data-exception]
+error_types:
+  - type: Dependency
+    description: Validation failed because of a restriction based on another field's value.
+    remediation: Read the dependency dictionary to find the related field.
+  - type: Field Permission
+    description: The current user does not have permission to modify the given field.
+    remediation: Escalate the user's role/ACL in the OpenX instance.
+  - type: Not Unique
+    description: >-
+      The field requires a unique value — across the instance, within the parent
+      account, within the parent object, or within an array field.
+  - type: Object Not Found
+    description: The object matching the given UID does not exist or was deleted.
+    http_status: 404
+  - type: Object One To One
+    description: The object's parent must have exactly one child.
+  - type: Object Type
+    description: The object matching the given UID is not of the expected type.
+  - type: Object Validation
+    description: >-
+      One or more input fields failed validation. Each field error carries a
+      field definition, a type and a human-readable message in field_errors.
+    http_status: 400
+  - type: Permission
+    description: The user may not perform this action on this object.
+    http_status: 403
+  - type: Range
+    description: The value is below the minimum or above the maximum allowed.
+  - type: Read Only
+    description: The field value may not be modified.
+  - type: Reference
+    description: >-
+      The object is referred to by another object and cannot be deleted; the
+      referring objects are listed in referencing_objects.
+  - type: Require
+    description: The field requires a non-null value.
+  - type: Size
+    description: >-
+      The value is too large or too small — character count for strings, item
+      count for arrays.
+  - type: Too Many Requests
+    description: >-
+      The instance exceeded its hourly API call quota. Applies to calls made by
+      script AND to normal usage of the Admin UI. Errors persist until the next
+      hour starts and the counter resets.
+    http_status: 429
+    remediation: Wait for the top of the hour; there is no documented Retry-After header.
+  - type: Type
+    description: The value is of the wrong type and cannot be coerced.
+  - type: Unknown Field
+    description: The input field does not exist on the object or sub-object.
+  - type: Validation
+    description: >-
+      Errors occurred inside nested structures; detail is in the field_errors
+      (sub-objects) and item_errors (arrays) dictionaries.
+  - type: Value Error
+    description: >-
+      The value must be one of a constrained set or match a pattern; the allowed
+      values appear in choices, or at the URL in the field definition.
+    http_status: 400
+statuses:
+  - status: 200
+    surface: Platform API / Reporting API / OpenXBuild RTB
+    description: Success. The Platform API also returns 200 (labelled "200 Created") on create.
+  - status: 202
+    surface: Reporting API pullReport
+    description: Report not ready yet; poll again.
+  - status: 204
+    surface: OpenXBuild Real-Time Bidstream API
+    description: Request successful; no mutations needed.
+  - status: 400
+    surface: Platform API / OpenXBuild RTB
+    description: Invalid JSON, malformed request, or field validation failure.
+  - status: 401
+    surface: api.openx.com gateway
+    description: >-
+      Missing or invalid credential. Observed on /oa/graphql as an Apigee fault
+      (steps.oauth.v2.FailedToResolveAPIKey) and on /mcp as a JSON-RPC
+      -32001 Unauthorized.
+    observed: true
+  - status: 429
+    surface: Platform API / OpenXBuild RTB
+    description: Hourly instance quota exceeded, or the enrichment service is throttling.
+  - status: 500
+    surface: Reporting API pullReport / OpenXBuild RTB
+    description: Report generation failed, or an error processing the request.

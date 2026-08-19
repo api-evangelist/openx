@@ -1,0 +1,92 @@
+generated: '2026-08-13'
+method: searched
+source: live probes of every OpenX host named in apis.yml
+note: >-
+  Only api.openx.com serves real /.well-known/ documents. It publishes OIDC
+  discovery (identical body at /.well-known/openid-configuration and
+  /.well-known/oauth-authorization-server), RFC 9728 protected-resource
+  metadata naming the resource "OpenX Platform API", and a JWKS. Every other
+  /.well-known/ path on api.openx.com answers HTTP 500 (an Apigee gateway
+  error, not a 404). unity.openx.com returns HTTP 200 with the same 1,989-byte
+  HTML single-page-app shell for EVERY /.well-known/ path, so it is recorded
+  as a soft-200 catch-all and NOT counted as a hit. www.openx.com,
+  docs.openx.com, login.openx.com and blog.openx.com return 404 on all paths.
+hosts:
+  - host: https://api.openx.com
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: openx-openid-configuration.json
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: application/json
+        file: openx-oauth-authorization-server.json
+        note: byte-identical to the openid-configuration document
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        content_type: application/json
+        file: openx-oauth-protected-resource.json
+        note: RFC 9728; resource_name "OpenX Platform API"
+      - path: /.well-known/jwks.json
+        status: 200
+        content_type: application/json
+        file: null
+        note: public signing keys; referenced by jwks_uri, not stored here
+      - path: /.well-known/security.txt
+        status: 500
+      - path: /.well-known/api-catalog
+        status: 500
+      - path: /.well-known/ai-plugin.json
+        status: 500
+      - path: /.well-known/agent-card.json
+        status: 500
+      - path: /.well-known/agent.json
+        status: 500
+  - host: https://www.openx.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/oauth-protected-resource, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+  - host: https://docs.openx.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/oauth-protected-resource, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+  - host: https://login.openx.com
+    documents:
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+  - host: https://unity.openx.com
+    soft_200_catchall: true
+    documents:
+      - path: /.well-known/agent-card.json
+        status: 200
+        content_type: text/html
+        counted_as_hit: false
+        note: >-
+          200 with a 1,989-byte HTML SPA shell; identical body returned for
+          security.txt, openid-configuration, api-catalog, ai-plugin.json and
+          agent.json. Not a document.
+  - host: https://blog.openx.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+summary:
+  hosts_probed: 6
+  real_documents: 4
+  security_txt: false
+  agent_card: false
+  api_catalog: false

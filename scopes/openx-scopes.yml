@@ -1,0 +1,56 @@
+generated: '2026-08-13'
+method: probed
+source: https://api.openx.com/.well-known/openid-configuration
+docs: https://docs.openx.com/developers/api-authentication/
+note: >-
+  OpenX publishes no OpenAPI, so these scopes are read from the live OIDC
+  discovery document and the RFC 9728 protected-resource metadata served at
+  api.openx.com, cross-checked against the scope string the published
+  authentication guide tells integrators to send ("openid email profile api").
+  OpenX documents no per-resource or per-object scopes — `api` is a single
+  coarse grant covering the whole Platform API; object-level access is
+  controlled by the OpenX user's role/ACL inside the instance, not by scope.
+schemes:
+  - name: OpenXPlatformOAuth2
+    source: https://api.openx.com/.well-known/openid-configuration
+    issuer: https://api.openx.com
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://api.openx.com/oauth2/v1/authorize
+        tokenUrl: https://api.openx.com/oauth2/v1/token
+        code_challenge_methods: [S256]
+      - flow: refreshToken
+        tokenUrl: https://api.openx.com/oauth2/v1/token
+scopes:
+  - scope: api
+    description: >-
+      Access the OpenX Platform API and Reporting API on the authenticated
+      user's behalf. Coarse-grained — there is no read/write or per-object split.
+    flows: [authorizationCode, refreshToken]
+    sources: [https://api.openx.com/.well-known/openid-configuration]
+  - scope: openid
+    description: OpenID Connect authentication; requests an id_token.
+    flows: [authorizationCode]
+    sources: [https://api.openx.com/.well-known/openid-configuration]
+  - scope: email
+    description: Release the email and email_verified claims.
+    flows: [authorizationCode]
+    sources: [https://api.openx.com/.well-known/openid-configuration]
+  - scope: profile
+    description: Release the name and user_id profile claims.
+    flows: [authorizationCode]
+    sources: [https://api.openx.com/.well-known/openid-configuration]
+  - scope: offline_access
+    description: >-
+      Issue a refresh_token so the client can mint new access tokens without
+      re-authenticating. Advertised in discovery but not named in the published
+      authentication guide, which nonetheless documents the refresh_token grant.
+    flows: [authorizationCode]
+    sources: [https://api.openx.com/.well-known/openid-configuration]
+protected_resource:
+  resource: https://api.openx.com
+  resource_name: OpenX Platform API
+  authorization_servers: [https://api.openx.com]
+  bearer_methods_supported: [header]
+  source: https://api.openx.com/.well-known/oauth-protected-resource
+claims_supported: [aud, email, email_verified, exp, iat, iss, name, sub, user_id]

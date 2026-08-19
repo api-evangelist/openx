@@ -1,0 +1,61 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/publishers/prebid-adapters/
+note: >-
+  OpenX ships no UI component library in the SaaS sense (no web components, no
+  embeddable dashboard, no element library). What it does publish is the ad-tech
+  equivalent: client-side integration surfaces a publisher drops into a page or
+  app to connect inventory to the OpenX exchange. Recorded here because they are
+  genuinely client-side and genuinely first-party, and labelled so nobody reads
+  them as an embedded-UI SDK.
+families:
+  - name: Prebid header-bidding adapters
+    kind: client-side bid adapter
+    loader: Prebid.js (built into a publisher's Prebid.js bundle)
+    components:
+      - name: OpenX Prebid.js web adapter
+        docs: https://docs.openx.com/publishers/prebid-adapter-web/
+      - name: OpenX Prebid.js video adapter
+        docs: https://docs.openx.com/publishers/prebid-adapter-video/
+    repos:
+      - https://github.com/openx/Prebid.js
+      - https://github.com/openx/prebid-server
+      - https://github.com/openx/prebid-server-java
+    note: >-
+      The adapters ship inside the Prebid.org distribution; the OpenX repos are
+      forks of the community projects. Not an OpenX-published npm package.
+  - name: Ad tags
+    kind: hosted tag / script
+    components:
+      - name: OpenX ad tags
+        docs: https://docs.openx.com/publishers/getting-ad-tags/
+        note: JavaScript / iframe tags generated per ad unit in the publisher UI.
+  - name: VAST video tags
+    kind: hosted VAST endpoint
+    components:
+      - name: CTV VAST tags
+        docs: https://docs.openx.com/publishers/ctv-vast/
+      - name: Web VAST ad tag
+        docs: https://docs.openx.com/publishers/video-adtag-vast-web/
+      - name: App VAST ad tag
+        docs: https://docs.openx.com/publishers/video-adtag-vast-app/
+      - name: ironSource VAST ad tag
+        docs: https://docs.openx.com/publishers/video-adtag-vast-ironsource/
+      - name: Fyber VAST ad tag
+        docs: https://docs.openx.com/publishers/video-adtag-vast-fyber/
+    note: Macro-parameterized URLs rather than a JS component.
+  - name: Mobile SDKs (archived)
+    kind: mobile SDK
+    components:
+      - name: Prebid Mobile SDK for iOS (OpenX fork)
+        repo: https://github.com/openx/prebid-mobile-ios
+        status: archived
+      - name: Prebid Mobile SDK for Android (OpenX fork)
+        repo: https://github.com/openx/prebid-mobile-android
+        status: archived
+    note: Both OpenX forks are archived on GitHub (last push 2026-02-27).
+not_present:
+  - embedded dashboards
+  - web components / custom elements
+  - hosted checkout or prebuilt UI surfaces
+  - a published npm component package under an @openx scope

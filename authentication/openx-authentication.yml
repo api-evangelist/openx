@@ -1,0 +1,108 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/developers/api-authentication/
+docs:
+  - https://docs.openx.com/developers/api-authentication/
+  - https://docs.openx.com/developers/api-get-started-auth/
+  - https://docs.openx.com/openxselect/oxs-api-get-started/
+  - https://api.openx.com/.well-known/openid-configuration
+  - https://api.openx.com/.well-known/oauth-protected-resource
+note: >-
+  OpenX publishes no OpenAPI, so this profile is read from the provider's own
+  authentication documentation and from the live OIDC/OAuth discovery documents
+  served at api.openx.com. Three distinct auth models are in production at once,
+  and a fourth (OAuth 1.0) is documented but its host is down.
+summary:
+  types: [oauth2, openIdConnect, apiKey, http]
+  api_key_in: [header]
+  oauth2_flows: [authorizationCode, refreshToken]
+  pkce: S256
+  bearer_in: [header]
+schemes:
+  - name: OpenXPlatformOAuth2
+    type: oauth2
+    applies_to: OpenX Platform API, OpenX Reporting API, OpenX MCP server
+    source: https://docs.openx.com/developers/api-authentication/
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://api.openx.com/oauth2/v1/authorize
+        tokenUrl: https://api.openx.com/oauth2/v1/token
+        refreshUrl: https://api.openx.com/oauth2/v1/token
+        revocationUrl: https://api.openx.com/oauth2/v1/revoke
+        code_challenge_method: S256
+        scopes:
+          api: Access the OpenX Platform API on the user's behalf
+          openid: OIDC authentication
+          email: User email claim
+          profile: User profile claims
+          offline_access: Issue a refresh token
+    identity_provider:
+      name: Google Cloud Identity Platform (identitytoolkit.googleapis.com)
+      step: >-
+        The caller first exchanges the user's email + password at
+        https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword
+        for an idToken, then presents that idToken to the OpenX authorize /
+        consent endpoints. OpenX publishes a fixed identity_provider_key for
+        this call in its docs; it is not recorded here.
+      note: >-
+        This is a resource-owner-password step in front of an authorization-code
+        flow. The user's raw password transits the client application.
+    request_headers:
+      - name: Authorization
+        value: Bearer <access_token>
+        required: true
+      - name: X-Openx-Instance
+        value: the hostname of the instance the user is registered in
+        required: true
+        note: >-
+          OpenX is multi-tenant per instance; the bearer token alone does not
+          select a tenant.
+    base_url: https://api.openx.com/api/v1/ox/4.0
+    token_endpoint_auth_methods: [none, client_secret_basic, client_secret_post]
+    id_token_signing_alg: RS256
+    subject_types: [pairwise]
+  - name: OpenXSelectApiKey
+    type: apiKey
+    in: header
+    parameter_name: x-apikey
+    applies_to: OpenXSelect GraphQL API (https://api.openx.com/oa/graphql)
+    source: https://docs.openx.com/openxselect/oxs-api-get-started/
+    issuance: OpenXSelect UI > username menu > Settings > API Keys > Create New API Key
+    scope: organization-wide (keys are issued for the whole organization)
+    expiration: 90 days (default and only documented value); a new key must be created on expiry
+    rotation: manual
+    note: >-
+      An unauthenticated POST to https://api.openx.com/oa/graphql returns
+      HTTP 401 with an Apigee fault
+      "Failed to resolve API Key variable request.header.x-apikey"
+      (errorcode steps.oauth.v2.FailedToResolveAPIKey), confirming the gateway
+      and the header name. The published docs say the same call returns 400;
+      the observed status is 401.
+  - name: OpenXLegacyOAuth1
+    type: http
+    scheme: oauth1
+    applies_to: OX3 / OX4 Platform API via the OpenX-published OX3 client libraries
+    source: https://docs.openx.com/developers/api-get-started-auth/
+    credentials: [Username, Password, Consumer Key, Consumer Secret, OAuth Realm]
+    endpoints:
+      request_token: https://sso.openx.com/api/index/initiate
+      authorize: https://sso.openx.com/login/process
+      access_token: https://sso.openx.com/api/index/token
+    session_cookie: openx3_access_token
+    client_header: X-OpenX-Client
+    status: broken
+    note: >-
+      sso.openx.com — the host every OpenX-published OX3 client library signs
+      against — returned HTTP 502 on 2026-08-13. The OAuth 1.0 path documented
+      at /developers/api-get-started-auth/ and implemented in
+      github.com/openx/ox-api-client-py cannot currently complete a login.
+  - name: OpenXBuildEnrichmentService
+    type: none
+    applies_to: OpenXBuild Real-Time Bidstream API (partner-implemented enrichment service)
+    source: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/
+    note: >-
+      The enrichment container runs inside OpenX's own Kubernetes namespace with
+      egress blocked, so the POST /openrtb25 and ARTF gRPC surfaces are secured
+      by network placement and GCP workload identity rather than by an API
+      credential. Object-store access is granted to partner-supplied GCP
+      principals.

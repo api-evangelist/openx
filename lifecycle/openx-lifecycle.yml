@@ -1,0 +1,115 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/resources/release-notes/
+docs:
+  - https://docs.openx.com/resources/release-notes/
+  - https://docs.openx.com/developers/api-conventions/
+  - https://docs.openx.com/openxselect/oxs-api-reference/
+versioning:
+  - api: OpenX Platform API
+    scheme: uri-path
+    current: '4.0'
+    path: /api/v1/ox/4.0
+    previous: '3.0'
+    docs: https://docs.openx.com/developers/api-conventions/
+    note: >-
+      OpenX warns that instances still served at /ox/3.0/ are a different API and
+      the v4 guide does not apply to them. Both major versions are live
+      simultaneously on different instances; there is no published migration
+      deadline for v3.
+  - api: OpenX Reporting API
+    scheme: uri-path
+    current: v1
+    path: /api/v1/reporting-api
+  - api: OpenXSelect API (GraphQL)
+    scheme: unversioned endpoint
+    current: BETA
+    path: /oa/graphql
+    note: >-
+      The whole OpenXSelect API is labelled BETA in the published reference.
+      Change is managed with GraphQL field-level @deprecated directives plus a
+      dated notice in the release notes, not with an endpoint version.
+  - api: OpenXBuild Real-Time Bidstream API
+    scheme: standard-pinned
+    current: OpenRTB 2.5 (HTTP) / OpenRTB 2.6 proto + IAB ARTF (gRPC)
+    path: POST /openrtb25
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  mechanism: >-
+    GraphQL @deprecated directive on the field, plus a dated entry in the
+    public release notes naming the replacement field and a removal date.
+  note: >-
+    OpenX has no standing deprecation policy page and does not advertise RFC 8594
+    Sunset/Deprecation headers. It has, however, demonstrated the practice: the
+    example below announced the replacement, the reason, and a hard removal date
+    in advance.
+  examples:
+    - api: OpenXSelect API (GraphQL)
+      deprecated: adunit_max_duration
+      replacement: adunit_max_duration_range
+      reason: >-
+        The old field only allowed the fixed values 15/30/45/60; the replacement
+        supports custom ranges.
+      announced: '2025-06'
+      announced_note: >-
+        The release-notes page interleaves dates and entries ambiguously; the
+        surrounding entries are dated 2025-06-10 and 2025-06-02. The removal
+        date below is stated explicitly in the entry text.
+      removal_date: '2025-07-31'
+      source: https://docs.openx.com/resources/release-notes/
+deprecated_operations: []
+sla:
+  url: null
+  uptime_target: null
+  published: false
+  note: >-
+    No public SLA. The only published performance commitment is directional and
+    runs the other way — it is what OpenX requires of a partner's OpenXBuild
+    enrichment service (<2 ms average, <5 ms p95, 10 ms timeout), not what OpenX
+    promises to callers.
+status_page: null
+status_page_published: false
+status_page_evidence:
+  - url: https://status.openx.com
+    status: null
+    note: NXDOMAIN — the host does not resolve
+  - url: https://docs.openx.com/resources/support/
+    status: 200
+    note: >-
+      Support routes to the OpenX Community for publishers, and to a named
+      Platform Development Manager (or demand@openx.com / 855-OpenX-4U) for DSP
+      partners. No incident/status surface is offered.
+release_notes:
+  url: https://docs.openx.com/resources/release-notes/
+  tracks: [Publisher, DSP Partner, Advertiser]
+  cadence: irregular, dated
+  most_recent: '2026-08-03'
+  see: changelog/openx-changelog.yml
+end_of_life:
+  - surface: OX3 / OX4 OAuth 1.0 login host (sso.openx.com)
+    observed_status: 502
+    observed: '2026-08-13'
+    note: >-
+      Not announced as deprecated anywhere, but the host every OpenX-published
+      OX3 client library authenticates against is returning HTTP 502. The
+      documentation at /developers/api-get-started-auth/ still presents OAuth 1.0
+      as a supported path.
+    evidence:
+      - url: https://sso.openx.com/
+        status: 502
+  - surface: docs.openx.com content pages
+    observed: '2026-08-13'
+    note: >-
+      Every documentation URL now returns a 1,132-byte Angular shell whose own
+      script bundles 404 at the site root, so the rendered pages are dead. The
+      underlying content is still published and machine-readable at
+      /assets/js/search-data.json.
+    evidence:
+      - url: https://docs.openx.com/developers/api-authentication/
+        status: 200
+        note: HTML SPA shell only
+      - url: https://docs.openx.com/main.359aeb593baa958e.js
+        status: 404

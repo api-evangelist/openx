@@ -1,0 +1,64 @@
+generated: '2026-08-13'
+method: searched
+source: https://github.com/openx/openx-enrichment-service-template
+note: >-
+  Saved verbatim from OpenX's own reference implementation for the OpenXBuild
+  Real-Time Bidstream API, which OpenX's docs name as the canonical starting
+  point ("A reference implementation is available at
+  openx-enrichment-service-template"). The service contract is the IAB Tech Lab
+  Agentic RTB Framework (ARTF) RTBExtensionPoint; OpenX redistributes the IAB
+  protos alongside its own OpenX-specific OpenRTB extension. Nothing here was
+  authored by the pipeline.
+docs:
+  - https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-artf/
+  - https://docs.openx.com/marketers/openxbuild/oxb-rtb-api-spec/
+transport:
+  protocol: gRPC over HTTP/2 (cleartext)
+  port: assigned by OpenX at deployment configuration time
+  http_alternative: POST /openrtb25 (JSON, OpenRTB 2.5 projection)
+files:
+  - file: openx-oxext.proto
+    package: com.iabtechlab.openrtb.v2
+    edition: '2023'
+    authored_by: OpenX
+    source: https://github.com/openx/openx-enrichment-service-template/blob/HEAD/proto/com/iabtechlab/openrtb/v2/oxext.proto
+    description: >-
+      OpenX's own extension to the IAB OpenRTB proto — extends
+      BidRequest.Imp.Ext with OxImpExtData (pbadslot, customdata[]) in the
+      OpenX-reserved field range 4000-4999.
+  - file: openx-artf-rtbextensionpoint.proto
+    package: com.iabtechlab.bidstream.mutation.services.v1
+    syntax: proto3
+    authored_by: IAB Tech Lab (redistributed by OpenX)
+    source: https://github.com/openx/openx-enrichment-service-template/blob/HEAD/proto/com/iabtechlab/bidstream/mutation/services/v1/agenticrtbframeworkservices.proto
+    description: >-
+      service RTBExtensionPoint { rpc GetMutations (RTBRequest) returns
+      (RTBResponse); } — the single RPC OpenX calls on a partner enrichment
+      service at the publisher-bid-request lifecycle event.
+  - file: openx-artf-agenticrtbframework.proto
+    package: com.iabtechlab.bidstream.mutation.v1
+    syntax: proto3
+    authored_by: IAB Tech Lab (redistributed by OpenX)
+    source: https://github.com/openx/openx-enrichment-service-template/blob/HEAD/proto/com/iabtechlab/bidstream/mutation/v1/agenticrtbframework.proto
+    description: >-
+      RTBRequest / RTBResponse / Mutation / Intent / Lifecycle message types.
+not_captured:
+  - path: proto/com/iabtechlab/openrtb/v2/openrtb.proto
+    reason: >-
+      Unmodified IAB Tech Lab OpenRTB 2.6 proto schema; redistributed by OpenX
+      but not OpenX-authored, and large. Referenced by import from the files
+      above.
+supported_intents:
+  - intent: ACTIVATE_SEGMENTS
+    path: /user/data/segment
+    value_type: IDsPayload
+    description: Segment IDs to attach for audience targeting.
+  - intent: ADJUST_DEAL_FLOOR
+    path: /imp/{impId}/pmp/deals/{dealId}
+    value_type: AdjustDealPayload
+    description: Bid floor override for a specific deal on a specific impression.
+health_endpoints:
+  - {path: /healthz, convention: OpenX, kind: readiness}
+  - {path: /health/ready, convention: ARTF, kind: readiness}
+  - {path: /health/live, convention: ARTF, kind: liveness}
+  - {path: /metrics, convention: Prometheus, kind: metrics, required: false}

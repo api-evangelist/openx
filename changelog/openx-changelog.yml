@@ -1,0 +1,139 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/resources/release-notes/
+url: https://docs.openx.com/resources/release-notes/
+scheme: dated entries, split into three audience tracks
+tracks: [Publisher, DSP Partner, Advertiser]
+current_version: null
+most_recent_entry: '2026-08-03'
+note: >-
+  OpenX publishes a single dated release-notes page with three tabs. It is a
+  product changelog, not an API changelog — the overwhelming majority of entries
+  describe UI features in OpenXControl / OpenXExchange / OpenXSelect. Only one
+  entry in the captured window is an API contract change (the OpenXSelect
+  GraphQL field deprecation). Recent window only; the live page is the source of
+  truth. Dates are as printed on the page, which interleaves date markers
+  between entries — where an entry's date attribution is ambiguous it is noted.
+entries:
+  - date: '2026-08-03'
+    track: Advertiser
+    title: New Inventory Quality Filter
+    breaking: false
+    api_affecting: false
+    highlights:
+      - Exclude below-average-quality domains from eligible deals using OpenX Inventory Quality Scores
+      - Inventory Quality score data added to the Deal Insights dashboard
+  - date: '2026-07-30'
+    track: Advertiser
+    title: OpenXSelect Data Marketplace internationally available
+    breaking: false
+    api_affecting: false
+    highlights:
+      - Third-party audience segments discoverable and activatable in-platform across multiple regions
+  - date: '2026-06-03'
+    track: [Publisher, DSP Partner, Advertiser]
+    title: Deal Planner
+    breaking: false
+    api_affecting: false
+    highlights:
+      - Pre-activation validation of deal setup with Monthly Avails, Audience Reduction Factor and Bid Guidance
+  - date: '2026-06-02'
+    track: [Publisher, DSP Partner, Advertiser]
+    title: Increased App Bundle ID limit
+    breaking: false
+    api_affecting: false
+    highlights:
+      - App Bundle ID limit per deal raised to 20,000
+  - date: '2026-04-22'
+    track: Advertiser
+    title: Results by OpenX
+    breaking: false
+    api_affecting: false
+    highlights:
+      - Real-time ML optimization inside OpenXSelect, scoring 40+ bidstream signals
+      - Two self-serve modes, Results Boost (default) and Results Max
+  - date: '2026-04-21'
+    track: [Publisher, DSP Partner, Advertiser]
+    title: Automated AND/OR logic for targeting categories
+    breaking: true
+    api_affecting: false
+    highlights:
+      - App Bundle IDs became a separate targeting category
+      - AND enforced across main targeting categories; OR auto-applied between App Inventory and Domains in Allow mode
+      - Manual controls permitting invalid logic combinations were removed
+  - date: '2026-04-20'
+    track: DSP Partner
+    title: Revert changes in Traffic Sets
+    breaking: false
+    api_affecting: false
+    highlights:
+      - Restore a previous Traffic Set configuration from Details > History
+      - Limited to the last 3 history entries and changes made in the past 7 days
+  - date: '2026-04-17'
+    track: Advertiser
+    title: Redesigned Audience Details screen
+    breaking: false
+    api_affecting: false
+  - date: '2026-02-11'
+    track: [Publisher, Advertiser]
+    title: Unified controls and new chart in Deal Troubleshoot
+    breaking: false
+    api_affecting: false
+  - date: '2026-02-03'
+    track: [Publisher, DSP Partner, Advertiser]
+    title: Optimized Location Radius targeting
+    breaking: false
+    api_affecting: false
+    highlights:
+      - Up to 10,000 coordinate pairs per deal; maximum radius standardized to 10 miles
+  - date: '2026-01-26'
+    track: [Publisher, DSP Partner, Advertiser]
+    title: In-category parameter visibility
+    breaking: false
+    api_affecting: false
+  - date: '2026-01-21'
+    track: Advertiser
+    title: Data Marketplace open beta for self-serve OpenXSelect users
+    breaking: false
+    api_affecting: false
+  - date: '2025-12-08'
+    track: Advertiser
+    title: New purchase-propensity segments
+    breaking: false
+    api_affecting: false
+    highlights:
+      - 275 brands and 69 brand categories added to OpenXSelect at no cost
+  - date: '2025-11-14'
+    track: [Publisher, Advertiser]
+    title: Frequency capping in deal creation
+    breaking: false
+    api_affecting: false
+    highlights:
+      - Per hour/day/week caps; available on request only
+  - date: '2025-06'
+    date_note: >-
+      Printed between the 2025-06-10 and 2025-06-02 markers on the release-notes
+      page; the removal date inside the entry is explicit.
+    track: Advertiser
+    title: OpenXSelect API update — adunit_max_duration deprecated
+    breaking: true
+    api_affecting: true
+    highlights:
+      - "GraphQL field adunit_max_duration marked @deprecated(reason: \"Use adunit_max_duration_range instead\")"
+      - Replacement adunit_max_duration_range supports custom ranges instead of the fixed values 15/30/45/60
+      - Announced removal date 2025-07-31
+    see: lifecycle/openx-lifecycle.yml
+  - date: '2025-09-09'
+    track: Advertiser
+    title: Inventory Discovery
+    breaking: false
+    api_affecting: false
+  - date: '2025-08-26'
+    track: Advertiser
+    title: Deal Insights dashboard
+    breaking: false
+    api_affecting: false
+coverage:
+  entries_captured: 17
+  window: 2025-06 to 2026-08-03
+  api_affecting_entries: 1

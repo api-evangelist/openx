@@ -1,0 +1,69 @@
+generated: '2026-08-13'
+method: probed
+status: published
+source: https://api.openx.com/mcp
+note: >-
+  OpenX runs a live, undocumented remote MCP server at https://api.openx.com/mcp.
+  It is not mentioned anywhere in docs.openx.com (a full-text scan of the 964
+  published documentation sections returns zero hits for "mcp" or
+  "model context"), and it was found by probing the API host that the
+  RFC 9728 protected-resource metadata at
+  https://api.openx.com/.well-known/oauth-protected-resource points at.
+  POST and GET both return HTTP 401 with a JSON-RPC 2.0 envelope
+  ({"jsonrpc":"2.0","error":{"code":-32001,"message":"Unauthorized"}}), which
+  is an MCP server responding, not a generic gateway 404 — every neighbouring
+  path (/v1/mcp, /sse) returns a bodyless 404 instead. The tool list is
+  therefore auth-gated and NOT recorded here; nothing about the tools is
+  guessed. mcp.openx.com does not resolve in DNS.
+deployment:
+  mode: remote
+  endpoint: https://api.openx.com/mcp
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+server:
+  name: openx
+  transport: http
+  url: https://api.openx.com/mcp
+authorization:
+  scheme: OAuth 2.0 (authorization_code + PKCE S256, refresh_token)
+  authorization_server: https://api.openx.com
+  metadata:
+    - https://api.openx.com/.well-known/oauth-protected-resource
+    - https://api.openx.com/.well-known/oauth-authorization-server
+  scopes_supported: [api, email, openid, profile, offline_access]
+  dynamic_client_registration: https://api.openx.com/oauth2/v1/register
+tools: []
+tools_note: >-
+  tools/list is auth-gated (HTTP 401). No published tool list exists in the
+  docs or in an llms.txt, so no tool names are recorded. Recovering the real
+  inputSchema set requires an authenticated introspection with an OpenX
+  account.
+x-evidence:
+  - fetched: '2026-08-13'
+    url: https://api.openx.com/mcp
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+    http_status: 401
+    content_type: application/json
+    response: '{"jsonrpc":"2.0","id":,"error":{"code":-32001,"message":"Unauthorized"}}'
+  - fetched: '2026-08-13'
+    url: https://api.openx.com/mcp
+    method: POST
+    body: initialize
+    http_status: 401
+    note: >-
+      the www-authenticate response header is present but EMPTY — it does not
+      carry the resource_metadata parameter RFC 9728 expects, so an MCP client
+      cannot discover the authorization server from the challenge alone.
+  - fetched: '2026-08-13'
+    url: https://api.openx.com/v1/mcp
+    http_status: 404
+  - fetched: '2026-08-13'
+    url: https://api.openx.com/sse
+    http_status: 404
+  - fetched: '2026-08-13'
+    url: https://mcp.openx.com/
+    http_status: null
+    note: NXDOMAIN

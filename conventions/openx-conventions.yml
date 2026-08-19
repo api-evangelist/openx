@@ -1,0 +1,125 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.openx.com/developers/api-conventions/
+docs:
+  - https://docs.openx.com/developers/api-conventions/
+  - https://docs.openx.com/developers/api-req-and-responses/
+  - https://docs.openx.com/developers/api-response-codes/
+  - https://docs.openx.com/openxselect/oxs-api-errors-and-exceptions/
+note: >-
+  Cross-cutting semantics for the OpenX Platform API (REST, v4) and the
+  OpenXSelect API (GraphQL). Read from OpenX's published developer
+  documentation; there is no OpenAPI to derive from.
+authentication:
+  style: OAuth 2.0 bearer (Platform + Reporting) / x-apikey header (OpenXSelect GraphQL)
+  tenant_header: X-Openx-Instance
+  see: authentication/openx-authentication.yml
+uri:
+  pattern: "{method} {base_URI}/{resource}/{identifier}?{parameter}&{parameter}"
+  base_url_rest: https://api.openx.com/api/v1/ox/4.0
+  legacy_base_url: https://{instance_hostname}/ox/4.0
+  version_in_path: true
+  note: >-
+    "/4.0/" in the path is the Platform API version. OpenX warns that instances
+    still on /3.0/ are a different API and the v4 guide does not apply to them.
+content_type:
+  request: application/json
+  response: application/json
+  required_request_header: Content-Type = application/json
+verbs:
+  GET: read a representation of the resource (the only verb services support)
+  POST: create the specified item
+  PUT: update the specified item
+  DELETE: delete the specified item
+crud_patterns:
+  - "GET /{resource_type} — list all objects/services of the type"
+  - "GET /{object_type}/{object_UID} — read one object"
+  - "POST /{object_type} — create (accepts an array for batch create)"
+  - "PUT /{object_type} — batch update (array of objects)"
+  - "PUT /{object_type}/{object_UID} — update one object"
+  - "DELETE /{object_type} — batch delete (array of UIDs)"
+  - "DELETE /{object_type}/{object_UID} — delete one object"
+batch:
+  supported: true
+  style: send an array of JSON objects (create/update) or an array of UIDs (delete)
+  response: 'array; delete returns a {uid: true} map per item'
+pagination:
+  style: offset
+  request_params:
+    limit: maximum items returned in one request; default 10
+    offset: index of the first item; default 0
+  response_field: has_more (boolean) — true when more pages exist
+  graphql:
+    style: offset
+    args: [limit, offset]
+    note: OpenXSelect GraphQL list fields take required Int! limit and offset arguments.
+schema_discovery:
+  endpoint: GET /{object_type}/available_fields
+  params:
+    action: create | update — returns the field set required for that action
+    type_full: required for polymorphic objects (e.g. account.publisher, ad.image)
+  returns: >-
+    per-field {type, required, readonly, auto, has_dependencies} plus an
+    options URL for enumerated fields. This is OpenX's substitute for a
+    published machine-readable schema.
+identifiers:
+  dual: true
+  fields: ["{object}_id (v3-era ID)", "{object}_uid (v4 UID)"]
+  guidance: >-
+    OpenX says to prefer IDs and fall back to UIDs; some create calls (e.g.
+    order) require the parent account_uid specifically and will fail on
+    account_id.
+debug_params:
+  pretty: >-
+    Formats the JSON response for humans. OpenX explicitly warns it degrades
+    performance and must not be used in production calls.
+idempotency:
+  supported: false
+  note: >-
+    OpenX documents no idempotency key, no request-replay contract and no
+    retry-safety guidance for POST/PUT. A full-text scan of all 964 published
+    documentation sections returns zero hits for "idempoten". No Idempotency
+    pointer is emitted.
+request_tracing:
+  header: x-request-id
+  direction: response
+  observed: true
+  note: >-
+    Undocumented, but every response observed from api.openx.com (including
+    401s from /mcp and /oa/graphql) carries an x-request-id UUID. Useful as a
+    support correlation ID.
+error_envelope:
+  rest:
+    shape: >-
+      JSON body with http_status, type (the OpenX error type), message,
+      field/field_errors/item_errors dictionaries, and attribute/choices for
+      value errors.
+    example_keys: [attribute, choices, field, http_status, message, type, value]
+    rfc9457: false
+  graphql:
+    shape: >-
+      HTTP 200 with a top-level errors[] array alongside data; each error has
+      message, path and extensions.code (e.g. GRAPHQL_VALIDATION_FAILED).
+      Callers must test for the presence of errors — data is still returned.
+    transport_errors: connection/auth failures surface as HTTP status codes
+  see: errors/openx-error-types.yml
+rate_limit_signaling:
+  documented_headers: []
+  status_on_exhaustion: 429
+  note: >-
+    OpenX documents an hourly per-instance call quota that returns 429 Too Many
+    Requests until the next hour begins, but publishes no RateLimit-* or
+    X-RateLimit-* response headers and no Retry-After contract. See
+    rate-limits/openx-rate-limits.yml.
+versioning:
+  rest: URI path segment (/ox/4.0, /api/v1)
+  graphql: unversioned endpoint; field-level @deprecated with an announced removal date
+  see: lifecycle/openx-lifecycle.yml
+field_expansion:
+  supported: false
+  note: no expand/fields/sparse-fieldset parameter is documented for the REST API
+metadata:
+  supported: partially
+  note: >-
+    Objects carry a free-text notes field and an external_id field for caller-
+    owned correlation; there is no generic key/value metadata bag.

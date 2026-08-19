@@ -1,0 +1,150 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  PyPI, Packagist, RubyGems and npm registry metadata endpoints, plus the
+  github.com/openx organization and
+  https://docs.openx.com/developers/api-third-party-libraries/
+note: >-
+  OpenX ships no modern, registry-published SDK. Every first-party client
+  library it names is either GitHub-only (no registry release at all) or last
+  released in 2021, and the one successor client OpenX itself points at —
+  "pip install oxapiclient", per the README of github.com/openx/ox-api-client-py
+  — has never been published to PyPI (HTTP 404). The published packages that do
+  exist all wrap the OX3/OX4 OAuth 1.0 flow against sso.openx.com, which
+  returned HTTP 502 when probed on 2026-08-13, so the newest first-party
+  release predates the current OAuth 2.0 Platform API entirely. OpenX's own
+  third-party-libraries page recommends generic OAuth libraries instead of its
+  SDKs.
+packages:
+  - language: python
+    registry: pypi
+    name: ox3apiclient
+    url: https://pypi.org/project/ox3apiclient/
+    install: pip install ox3apiclient
+    repo: https://github.com/openx/OX3-Python-API-Client
+    official: true
+    version: 0.6.3
+    published: '2021-09-28'
+    author: OpenX API Team
+    covers: OX3 / Platform API v3-v4 over OAuth 1.0
+    status: stale
+    note: >-
+      Last release 2021-09-28. The GitHub repo is archived. Signs against
+      sso.openx.com, which is currently returning HTTP 502.
+  - language: python
+    registry: none
+    name: ox-api-client-py
+    url: https://github.com/openx/ox-api-client-py
+    install: null
+    official: true
+    version: null
+    published: null
+    intended_registry_name: oxapiclient
+    status: unpublished
+    note: >-
+      OpenX's own README calls this "the new client for OpenX API" that
+      "supersedes the ox3apiclient" and instructs "pip install oxapiclient",
+      but https://pypi.org/pypi/oxapiclient/json returns 404 — the package does
+      not exist on PyPI. The README is still carrying unfilled template text
+      ("**TODO**: Put more badges here", "TheOther Person") and the code still
+      implements OAuth 1.0 against sso.openx.com, not the documented OAuth 2.0
+      flow. version recorded as null: checked, nothing published.
+  - language: python
+    registry: none
+    name: reporting-api-client
+    url: https://github.com/openx/reporting-api-client
+    install: git clone https://github.com/openx/reporting-api-client
+    official: true
+    version: null
+    published: null
+    last_commit: '2026-07-18'
+    status: active
+    note: >-
+      Source-only; no PyPI release, no package metadata, no versioning. This is
+      the client OpenX's own authentication docs link to as the reference
+      implementation for the OAuth 2.0 flow. Ships a Python and a Bash variant.
+      version recorded as null: there is no registry to read a version from.
+  - language: php
+    registry: packagist
+    name: openx/ox3-php-api-client
+    url: https://packagist.org/packages/openx/ox3-php-api-client
+    install: composer require openx/ox3-php-api-client
+    repo: https://github.com/openx/OX3-PHP-API-Client
+    official: true
+    version: 1.0.0
+    published: '2021-10-16'
+    author: Cezar Pokorski (cezar@openx.com)
+    covers: OX3 / Platform API over OAuth 1.0
+    status: stale
+    downloads_total: 14
+  - language: java
+    registry: none
+    name: OX3-Java-API-Client
+    url: https://github.com/openx/OX3-Java-API-Client
+    install: null
+    official: true
+    version: null
+    published: null
+    status: source-only
+    note: >-
+      "An OX3 OAuth interaction demo for Java." Not published to Maven Central;
+      no coordinates exist to query. version recorded as null: no registry entry.
+  - language: perl
+    registry: none
+    name: OX3-Perl-API-Client
+    url: https://github.com/openx/OX3-Perl-API-Client
+    install: null
+    official: true
+    version: null
+    published: null
+    status: archived
+    note: >-
+      Repo archived; last push 2013-09-24. Not on CPAN under the OpenX org.
+  - language: ruby
+    registry: none
+    name: OX3-Ruby-API-Client
+    url: https://github.com/openx/OX3-Ruby-API-Client
+    install: null
+    official: true
+    version: null
+    published: null
+    status: archived
+    note: >-
+      Repo archived; last push 2019-08-06. The `openx` gem on RubyGems is a
+      third-party XML-RPC client for the old open-source OpenX ad server, not
+      this library and not first-party.
+  - language: go
+    registry: none
+    name: openx-enrichment-service-template
+    url: https://github.com/openx/openx-enrichment-service-template
+    install: git clone https://github.com/openx/openx-enrichment-service-template
+    official: true
+    version: null
+    published: null
+    last_commit: '2026-07-25'
+    status: active
+    covers: >-
+      Reference implementation + specification for an OpenXBuild containerized
+      enrichment service (HTTP POST /openrtb25 and the IAB ARTF gRPC
+      RTBExtensionPoint). Carries the .proto definitions captured in grpc/.
+    note: >-
+      A Go module consumed by cloning, not by `go get` from a proxy —
+      proxy.golang.org has no tagged version to report. version recorded as
+      null: no release tags.
+not_first_party:
+  - name: Prebid.js
+    url: https://github.com/openx/Prebid.js
+    npm: https://www.npmjs.com/package/prebid.js
+    note: >-
+      github.com/openx/Prebid.js is a fork of the prebid/Prebid.js community
+      project; the npm package is published by Prebid.org, not OpenX. OpenX
+      contributes the OpenX bid adapter to it. Not counted as an OpenX SDK.
+  - name: prebid-server / prebid-server-java
+    note: Same — OpenX forks of the Prebid.org server projects.
+summary:
+  official_packages: 8
+  registry_published: 2
+  registry_published_languages: [python, php]
+  newest_registry_release: '2021-10-16'
+  source_only: 6
+  covers_current_oauth2_api: false

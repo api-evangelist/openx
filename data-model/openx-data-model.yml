@@ -1,0 +1,301 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://docs.openx.com/developers/api-ref/ and
+  https://docs.openx.com/openxselect/oxs-api-reference/
+note: >-
+  OpenX publishes no OpenAPI and its GraphQL introspection is API-key gated, so
+  this entity graph is read from OpenX's own published object references rather
+  than derived from a machine-readable schema. Two distinct object models exist
+  and they do not share identifiers: the Platform API (REST v4) model of the ad
+  server, and the OpenXSelect (GraphQL) model of curation. Relationships are
+  recorded only where the published field description or object description
+  states the link.
+domains:
+  - name: Platform API (REST v4)
+    base_url: https://api.openx.com/api/v1/ox/4.0
+    reference: https://docs.openx.com/developers/api-ref/
+    identifiers:
+      pattern: every object carries both {object}_id (v3-era) and {object}_uid (v4)
+      guidance: prefer IDs; some creates require the parent _uid specifically
+    entities:
+      - name: account
+        kind: object
+        crud: [create, read, update, delete]
+        description: A business unit or business relationship — ad network, advertiser, publisher, or agency.
+        subtypes: [account.network, account.publisher, account.advertiser, account.agency]
+      - name: ad
+        kind: object
+        crud: [create, read, update, delete]
+        description: The functional unit displayed in the ad space.
+        subtypes_example: [ad.image]
+      - name: adunit
+        kind: object
+        crud: [create, read, update, delete]
+        description: A specific area on a site where ads are displayed.
+      - name: adunitgroup
+        kind: object
+        crud: [create, read, update, delete]
+        description: A collection of ad units, for companion ads or CMS mapping.
+      - name: comment
+        kind: object
+        crud: [create, read, update, delete]
+        description: Comment log attachable to any API object.
+      - name: creative
+        kind: object
+        crud: [create, read, update, delete]
+        description: The media asset used in an ad; references a local or remote file on the OpenX CDN.
+      - name: deal
+        kind: object
+        crud: [create, read, update, delete]
+        description: A prearranged agreement to sell specific inventory.
+      - name: floorrule
+        kind: object
+        crud: [create, read, update, delete]
+        description: Minimum price rules for ad space.
+      - name: lineitem
+        kind: object
+        crud: [create, read, update, delete]
+        description: Line item details associated with orders — pricing, goals, targeting.
+      - name: optimization
+        kind: object
+        crud: [create, read, update, delete]
+        description: Real-time selling rules — targeting criteria, minimum prices, advertiser and content filters.
+      - name: order
+        kind: object
+        crud: [create, read, update, delete]
+        description: Direct demand for ad space.
+      - name: package
+        kind: object
+        crud: [create, read, update, delete]
+        description: Reusable grouping of inventory for deals and pricing controls.
+      - name: paymenthistory
+        kind: object
+        crud: [create, read, update, delete]
+        description: Payment details for a specified account.
+      - name: site
+        kind: object
+        crud: [create, read, update, delete]
+        description: A collection of ad unit inventory.
+      - name: sitesection
+        kind: object
+        crud: [create, read, update, delete]
+        description: A grouping of ad space within a site.
+      - name: user
+        kind: object
+        crud: [create, read, update, delete]
+        description: An individual who logs in and acts on behalf of the accounts they can access.
+      - name: audittrail
+        kind: service
+        crud: [read]
+        description: Historical record of data creation, modification and deletion.
+      - name: geo
+        kind: service
+        crud: [read]
+        description: Geolocation values for targeting.
+      - name: market
+        kind: service
+        crud: [read]
+        description: Advertisers, brands and market operators.
+      - name: options
+        kind: service
+        crud: [read]
+        description: Enumerated option values for a given options key.
+      - name: session
+        kind: service
+        crud: [read]
+        description: Login/logout and session interaction.
+      - name: subtypes
+        kind: service
+        crud: [read]
+        description: The subtypes creatable for account, lineitem, order and site.
+      - name: adquality
+        kind: service
+        crud: [read]
+        documented: false
+        description: UI-only creative review and blocking service; no reference documentation.
+      - name: i18n
+        kind: service
+        crud: [read]
+        documented: false
+      - name: oxsearch
+        kind: service
+        crud: [read]
+        documented: false
+      - name: reports
+        kind: service
+        crud: [read]
+        documented: false
+    relationships:
+      - from: account
+        to: account
+        type: belongs_to
+        via: account_uid
+        evidence: >-
+          Batch create samples parent a new account under a parent_account_uid;
+          responses carry parent_name and instance_uid.
+      - from: order
+        to: account
+        type: belongs_to
+        via: account_uid
+        evidence: >-
+          "to create an order, the account_uid is required. If you specify the
+          account_id instead, the call will not work."
+      - from: lineitem
+        to: order
+        type: belongs_to
+        via: order
+        evidence: '"Provides line item details associated with orders"'
+      - from: adunitgroup
+        to: adunit
+        type: has_many
+        via: adunitgroup
+        evidence: '"Collections of ad units"'
+      - from: sitesection
+        to: site
+        type: belongs_to
+        via: site
+        evidence: '"a grouping of ad space in a site"'
+      - from: site
+        to: adunit
+        type: has_many
+        via: site
+        evidence: '"Represents a collection of ad unit inventory"'
+      - from: paymenthistory
+        to: account
+        type: belongs_to
+        via: account
+        evidence: '"Provides payment details for a specified account"'
+      - from: comment
+        to: any
+        type: polymorphic
+        via: object uid
+        evidence: '"Supports the logging of comments for any API object"'
+  - name: OpenXSelect API (GraphQL)
+    endpoint: https://api.openx.com/oa/graphql
+    reference: https://docs.openx.com/openxselect/oxs-api-reference/
+    status: BETA
+    scalars: [uuid, timestamptz, numeric, Decimal, Decimal2, Decimal4, Decimal6, JSON, StringOrInt, UBigInt64, GraphQLUBigInt64, IntersectionOperation]
+    entities:
+      - name: Account
+        description: The account the caller's API key is bound to.
+      - name: Advertiser
+        description: An advertiser scoped to an account.
+      - name: Provider
+        description: A data provider.
+      - name: AccountProvider
+        description: The mapping between Account and Provider.
+      - name: Segment
+        description: A named collection of identifiers uploaded to the OpenXSelect platform.
+      - name: Audience
+        description: A set of Segments combined via boolean operations.
+      - name: Deal
+        description: Supply-side inventory that may target an audience.
+      - name: DealParticipants
+        description: The DSPs, buyers and brands participating in a deal.
+      - name: Package
+        description: Targeting criteria and/or URL lists applicable to a deal.
+      - name: Targeting
+        description: Audience, content, context and placement targeting attributes.
+      - name: URLTargeting
+        description: Domain allowlist/blocklist targeting.
+      - name: BidderOrder
+        description: An advertising order grouping line items; defines advertiser, flight dates and budget.
+      - name: BidderLineItem
+        description: A line item linking an order, a creative and a deal.
+      - name: BidderCreative
+        description: An ad creative asset with markup payload; must be approved before use.
+      - name: RetargetingSegment
+        implements: RoutedSegment
+      - name: PredefinedSegment
+        implements: RoutedSegment
+      - name: Export
+        description: An audience export.
+      - name: FrequencyCapping
+      - name: CuratedDealBuyerDiscount
+      - name: PdpConfig
+      - name: ThirdPartyFeesConfig
+      - name: ThirdPartyRevenue
+    relationships:
+      - from: Account
+        to: Advertiser
+        type: has_many
+        via: advertisers
+        evidence: '"Advertisers in this account, sorted by name ascending"'
+      - from: AccountProvider
+        to: Account
+        type: belongs_to
+        via: account_id
+      - from: AccountProvider
+        to: Provider
+        type: belongs_to
+        via: provider_id
+      - from: AudienceSegment
+        to: Audience
+        type: belongs_to
+        via: audience_id
+      - from: AudienceSegment
+        to: Segment
+        type: belongs_to
+        via: segment_id
+      - from: BidderOrder
+        to: Account
+        type: belongs_to
+        via: account_id
+      - from: BidderLineItem
+        to: BidderOrder
+        type: belongs_to
+        via: bidder_order_uid
+      - from: BidderLineItem
+        to: Deal
+        type: belongs_to
+        via: deal_id
+      - from: BidderCreative
+        to: Account
+        type: belongs_to
+        via: account_id
+      - from: Deal
+        to: Audience
+        type: has_one
+        via: audience
+        evidence: '"A Deal represents supply-side advertising inventory that may target an audience"'
+      - from: Deal
+        to: DealParticipants
+        type: has_many
+        via: deal_participants
+      - from: Package
+        to: Targeting
+        type: has_one
+        via: targeting
+      - from: RoutedSegment
+        to: [RetargetingSegment, PredefinedSegment]
+        type: interface_implementations
+    enumerations_via:
+      field: optionsByPath(path:)
+      note: >-
+        Many scalar fields are constrained to values fetched at runtime from
+        optionsByPath, e.g. deal.currency, deal.deal_participants.demand_partner,
+        segment.country. There is no static enum for these.
+  - name: Reporting API
+    base_url: https://api.openx.com/api/v1/reporting-api
+    reference: https://docs.openx.com/publishers/reporting-api-reference/
+    entities:
+      - name: Report
+        fields: [id]
+        description: An asynchronous report job; generateReport returns an id, pullReport exchanges it for CSV.
+    dimensions_count: 41
+    metrics_count: 9
+    note: >-
+      The dimension and metric vocabularies are the real data model here — 41
+      case-sensitive dimensions (Day, Hour, PageDomain, DealId, DspAccountId,
+      PublisherPlatformId, UserGeoCountry, …) and 9 metrics (AllRequests,
+      Impressions, ExchangeFills, MarketRequests, VideoStarts, VideoCompletions,
+      PrivateMarketImpressions, PublisherRevenueInPCoin,
+      PrivateMarketPublisherGrossRevenueInPCoin).
+cross_domain_note: >-
+  The Platform API `deal`/`package`/`account` objects and the OpenXSelect
+  `Deal`/`Package`/`Account` GraphQL types describe overlapping business
+  concepts but are separate models with separate identifiers; OpenX publishes no
+  crosswalk between them. The Reporting API's DealId/PackageId dimensions are the
+  only documented join point.
+render: null
