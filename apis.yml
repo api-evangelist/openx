@@ -72,7 +72,7 @@ tags:
 url: https://raw.githubusercontent.com/api-evangelist/openx/refs/heads/main/apis.yml
 created: '2026-05-25'
 modified: '2026-08-13'
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 apis:
   - aid: openx:openx-platform-api
     name: OpenX Platform API
