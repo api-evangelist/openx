@@ -54,6 +54,27 @@ tags:
   - Ad Exchange
   - Supply Side Platform
   - SSP
+  - Real-Time Bidding
+  - OpenRTB
+  - Header Bidding
+  - Prebid
+  - AdTech
+  - CTV
+  - Video Advertising
+  - Display Advertising
+  - Curation
+  - Identity
+  - GraphQL
+  - gRPC
+  - MCP
+  - Reporting
+  - Audience Targeting
+tags_raw:
+  - Advertising
+  - Programmatic Advertising
+  - Ad Exchange
+  - Supply Side Platform
+  - SSP
   - Real Time Bidding
   - OpenRTB
   - Header Bidding
@@ -88,6 +109,12 @@ apis:
     humanURL: https://docs.openx.com/developers/api-ref/
     baseURL: https://api.openx.com/api/v1/ox/4.0
     tags:
+      - Platform
+      - REST
+      - Inventory
+      - Deals
+      - Targeting
+    tags_raw:
       - platform
       - rest
       - inventory
@@ -123,6 +150,11 @@ apis:
     humanURL: https://docs.openx.com/publishers/reporting-api-reference/
     baseURL: https://api.openx.com/api/v1/reporting-api
     tags:
+      - Reporting
+      - Analytics
+      - REST
+      - Publishers
+    tags_raw:
       - reporting
       - analytics
       - rest
@@ -151,6 +183,12 @@ apis:
     humanURL: https://docs.openx.com/openxselect/oxs-api-reference/
     baseURL: https://api.openx.com/oa/graphql
     tags:
+      - GraphQL
+      - Curation
+      - Audiences
+      - Deals
+      - Segments
+    tags_raw:
       - graphql
       - curation
       - audiences
@@ -184,6 +222,10 @@ apis:
     humanURL: https://docs.openx.com/developers/api-authentication/
     baseURL: https://api.openx.com/mcp
     tags:
+      - MCP
+      - agent-native
+      - Authentication
+    tags_raw:
       - mcp
       - agent-native
       - oauth
@@ -210,6 +252,12 @@ apis:
       port by OpenX at deployment time.
     humanURL: https://docs.openx.com/marketers/openxbuild/oxb-rtb-api/
     tags:
+      - OpenRTB
+      - gRPC
+      - bidstream
+      - Enrichment
+      - iab-artf
+    tags_raw:
       - openrtb
       - grpc
       - bidstream
