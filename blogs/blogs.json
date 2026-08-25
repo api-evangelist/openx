@@ -3,17 +3,19 @@
   "feeds": [
     {
       "source": "https://blog.openx.com/feed/",
-      "feed_url": "https://blog.openx.com/feed/",
+      "feed_url": "https://www.openx.com/feed/",
       "title": "",
-      "saved": 0,
-      "method": "feed",
-      "error": "parse_failed"
+      "saved": 1,
+      "method": "discovered"
     },
     {
-      "source": "https://www.openx.com/newsroom/",
-      "error": "HTTPError"
+      "source": "https://www.openx.com/news-press/",
+      "feed_url": "https://www.openx.com/feed/",
+      "title": "",
+      "saved": 0,
+      "method": "discovered"
     }
   ],
-  "post_count": 11,
-  "fetched": "2026-08-15T12:11:08Z"
+  "post_count": 12,
+  "fetched": "2026-08-22T20:20:02Z"
 }
