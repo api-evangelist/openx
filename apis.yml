@@ -31,6 +31,18 @@ description: >-
   transaction-fee based, and API access requires an active OpenX account and
   BD/account-management onboarding rather than self-service signup.
 type: Index
+deliveryModel:
+  model: unknown
+  open_source: unknown
+  commercial: true
+  callable_host: false
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - pricing
+  - repository-unlicensed
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: none
   onboarding: sales
