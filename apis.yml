@@ -57,7 +57,7 @@ accessModel:
     - https://docs.openx.com/publishers/reporting-api/
   generated: '2026-08-13'
   method: searched
-position: Provider
+position: Producing
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/openx.png
 tags:
