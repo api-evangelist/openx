@@ -32,16 +32,20 @@ description: >-
   BD/account-management onboarding rather than self-service signup.
 type: Index
 deliveryModel:
-  model: unknown
+  model: saas
+  license_evidence:
+    not_product:
+    - openx/openx-enrichment-service-template
+    - openx/reporting-api-client
   open_source: unknown
   commercial: true
   callable_host: false
-  label: Delivery model not determined — needs a product licence on record
+  label: Hosted service · you call their endpoint
   confidence: low
   source:
   - pricing
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: none
@@ -234,7 +238,7 @@ apis:
     baseURL: https://api.openx.com/mcp
     tags:
       - MCP
-      - agent-native
+      - Agent-Native
       - Authentication
     tags_raw:
       - mcp
