@@ -5,6 +5,24 @@ checked:
 - https://vendor-list.consensu.org/v3/vendor-list.json
 marketplace_apps: []
 edges:
+- partner_name: Hightouch
+  partner: hightouch
+  partner_match: aggregator
+  marketplace: coverage
+  channel: partner-built
+  direction: partner-built
+  type: coverage
+  relationship: connector-coverage
+  evidence: https://hightouch.com/docs/destinations/openx
+  coverage_role:
+  - destination
+  cdp_signals:
+    destination:
+      catalog_entries:
+      - openx
+      status: released
+  detected_by: sweep-cdp.py
+  first_seen: '2026-10-14'
 - partner_name: IAB Europe TCF Global Vendor List
   partner: null
   partner_match: domain
@@ -40,22 +58,4 @@ edges:
     - App
   detected_by: sweep-adtech.py
   detected: '2026-10-14'
-- partner_name: Hightouch
-  partner: hightouch
-  partner_match: aggregator
-  marketplace: coverage
-  channel: partner-built
-  direction: partner-built
-  type: coverage
-  relationship: connector-coverage
-  evidence: https://hightouch.com/docs/destinations/openx
-  coverage_role:
-  - destination
-  cdp_signals:
-    destination:
-      catalog_entries:
-      - openx
-      status: released
-  detected_by: sweep-cdp.py
-  first_seen: '2026-10-14'
 source: https://hightouch.com/docs/destinations/openx
