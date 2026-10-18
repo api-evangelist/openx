@@ -270,7 +270,7 @@ apis:
       - OpenRTB
       - gRPC
       - bidstream
-      - Enrichment
+      - Data Enrichment
       - iab-artf
     tags_raw:
       - openrtb
