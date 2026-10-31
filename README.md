@@ -1,4 +1,4 @@
-# openx
+# OpenX
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,27 +64,129 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-OpenX — independent programmatic ad exchange and supply-side platform (SSP).
+OpenX is an independent supply-side platform (SSP) and programmatic ad exchange headquartered in Pasadena, California, founded in 2008. OpenX connects publishers and app developers to advertiser demand through a real-time marketplace that runs OpenRTB-based auctions across display, video, CTV, native, and mobile inventory. Its product suite is organized around the OpenX Exchange (the core marketplace), OpenXSelect (curation, deal creation, and supply-path targeting), OpenXBuild (real-time bidstream enrichment, auction insights, and identity resolution), and OpenXControl (publisher yield management and demand routing). OpenX runs five developer surfaces on api.openx.com: a REST Platform API (v4) for accounts, inventory, orders, deals, and targeting; a Reporting API for asynchronous CSV report generation across 41 dimensions and 9 metrics; an OpenXSelect GraphQL API for audiences, segments, deals, and bidder objects; an OpenXBuild Real-Time Bidstream API that a partner implements as a containerized enrichment service (HTTP POST /openrtb25 plus an IAB Agentic RTB Framework gRPC RTBExtensionPoint); and an undocumented but live remote MCP server. Authentication is OAuth 2.0 authorization-code with PKCE fronted by Google Cloud Identity Platform, published through real OIDC and RFC 9728 discovery documents, with a separate 90-day x-apikey credential for the GraphQL API. OpenX publishes no OpenAPI, no Postman collection, no status page, no pricing, and no security.txt, and its documentation site currently renders as a broken single-page-app shell whose underlying content survives only as a JSON search index. The company is a major contributor to the Prebid.org header-bidding ecosystem and maintains a large GitHub organization, though its first-party API client libraries were last released to a package registry in 2021 and still target a legacy OAuth 1.0 login host that now returns HTTP 502. The business model is transaction-fee based, and API access requires an active OpenX account and BD/account-management onboarding rather than self-service signup.
 
-OpenX is a Pasadena, California-headquartered independent ad exchange that
-connects publishers and app developers to advertiser demand through an
-OpenRTB-based real-time marketplace spanning display, video, CTV, native,
-and mobile inventory. Its product suite includes the OpenX Exchange,
-OpenXSelect (curation and deal creation), OpenXBuild (custom supply-side
-toolkit and real-time bidstream), and OpenXControl (publisher yield
-management).
+**Areas:** Advertising · Programmatic Advertising · Ad Exchange · Supply Side Platform · Real-Time Bidding · OpenRTB · Header Bidding · Prebid · AdTech · CTV · Video Advertising · Display Advertising
 
-**APIs documented** (references gated behind OAuth at `docs.openx.com`):
+## OpenX on APIs.io
 
-- OpenRTB API — DSP bidding integration
-- Platform API — accounts, inventory, demand, targeting, deals
-- Reporting API — analytics and performance metrics
-- OpenXSelect GraphQL API — audiences, deals, inventory lists
-- OpenXBuild Real-Time Bidstream API
+Everything profiled for OpenX is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/openx/](https://apis.io/providers/openx/)** — or go straight to one of the APIs or properties below.
 
-OpenX does not publish a public OpenAPI specification or Postman
-collection; access to API references requires an OpenX account login.
-OpenX is also a foundational contributor to the Prebid.org header-bidding
-ecosystem (Prebid.js and Prebid Server).
+### APIs (5)
 
-**URL:** [Visit APIs.json](https://raw.githubusercontent.com/api-evangelist/openx/refs/heads/main/apis.yml)
+- [OpenX Platform API](https://apis.io/apis/openx/openx-platform-api/) — JSON REST API (v4) for the OpenX ad server. Sixteen CRUD objects (account, ad, adunit, adunitgroup, comment, creative, deal, floorrule, lineitem,…
+- [OpenX Reporting API](https://apis.io/apis/openx/openx-reporting-api/) — Asynchronous reporting API for authorized OpenX publishers. POST generateReport with dimensions, metrics, filters, reportType (HOURLY|DAILY) and an ISO-8601…
+- [OpenXSelect API](https://apis.io/apis/openx/openxselect-api/) — GraphQL API (BETA) for the OpenXSelect curation platform — query providers, segments, audiences, deals and packages, and mutate audiences…
+- [OpenX MCP Server](https://apis.io/apis/openx/openx-mcp-server/) — Live remote Model Context Protocol server at https://api.openx.com/mcp. Discovered by probe, not by documentation — OpenX does not mention MCP anywhere in…
+- [OpenXBuild Real-Time Bidstream API](https://apis.io/apis/openx/openxbuild-real-time-bidstream-api/) — An inverted API — OpenX is the caller. A partner implements an enrichment service that OpenX hosts as a container inside its own Kubernetes namespace and…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### GraphQL (1)
+
+GraphQL schemas.
+
+- [OpenXSelect API (GraphQL)](https://apis.io/graphqls/openx/openx-graphql/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [openx](https://apis.io/servers/openx/openx/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Openx Authentication](https://apis.io/security/openx/openx-authentication/)
+- [Openx Domain Security](https://apis.io/security/openx/openx-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Openx Scopes](https://apis.io/scopes/openx/openx-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Openx Plans Pricing](https://apis.io/plans/openx/openx-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Openx Rate Limits](https://apis.io/rate-limits/openx/openx-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.openx.com)
+- [Documentation](https://docs.openx.com)
+- [Getting started](https://docs.openx.com/developers/api-get-started-auth/)
+- [API reference](https://docs.openx.com/developers/api-ref/)
+- [Support](https://docs.openx.com/resources/support/)
+- [Changelog](https://docs.openx.com/resources/release-notes/)
+- [Blog](https://blog.openx.com/)
+- [Terms of service](https://www.openx.com/legal/terms-and-conditions/)
+- [Privacy policy](https://www.openx.com/legal/privacy-policy/)
+- [GitHub](https://github.com/openx)
+
+## API Evangelist rating
+
+**Kin Score 36.1** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.3 |
+| Contract quality | 24.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 18.4 |
+| Developer ergonomics | 69.0 |
+| Access clarity | 10.5 |
+
+**Agent readiness 40.5** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 30.4** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/openx/](https://apis.io/providers/openx/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for OpenX: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/openx/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
